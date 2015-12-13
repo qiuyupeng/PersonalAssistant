@@ -8,6 +8,7 @@ def get_raw_data(list_ticker):
 	#construct the query
 	final_url = URL_PREFIX + ','.join(list_ticker)
 	#fetch data
+
 	with urllib.request.urlopen(final_url) as url_obj:
 		str_output = url_obj.read().decode('unicode_escape')
 
@@ -18,10 +19,3 @@ def get_raw_data(list_ticker):
 
 
 
-
-
-
-
-
-if __name__ == "__main__":
-	print(get_raw_data(["NASDQ:GOOG"]))
