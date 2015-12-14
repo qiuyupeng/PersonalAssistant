@@ -1,12 +1,14 @@
 import unittest
 import urllib.request
 
-from googleFinancePull import get_raw_data
+from .googleFinancePull import get_raw_data
 
-class TestStringMethods(unittest.TestCase):
+class TestGoogleFinance(unittest.TestCase):
 	"""
 	This class tests the GoogleFinancePull.py 
 	"""
+	def getTestCaseNames(self):
+		return ('test_oneticker')
 	def test_oneticker(self):
 		"""
 		Test whether the get_raw_data function returns the result ticker of NASDQ:GOOG
@@ -33,11 +35,3 @@ class TestStringMethods(unittest.TestCase):
 		else:
 			self.assertEqual('GOOG', data[0]['t'])
 			self.assertEqual('FB', data[1]['t'])
-
-
-
-
-
-
-if __name__ == "__main__":
-	unittest.main()
