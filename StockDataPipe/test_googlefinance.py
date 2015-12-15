@@ -1,20 +1,21 @@
 import unittest
 import urllib.request
 
-from .googleFinancePull import get_raw_data
+from .googleFinancePull import stockPriceWritter
+
+spw = stockPriceWritter()
 
 class TestGoogleFinance(unittest.TestCase):
 	"""
 	This class tests the GoogleFinancePull.py 
 	"""
-	def getTestCaseNames(self):
-		return ('test_oneticker')
+
 	def test_oneticker(self):
 		"""
 		Test whether the get_raw_data function returns the result ticker of NASDQ:GOOG
 		"""
 		try:
-			data = get_raw_data(["NASDQ:GOOG"])
+			data = spw.get_raw_data_from_gfinance(["NASDQ:GOOG"])
 		except urllib.error.URLError as e:
 			#bad request
 			self.assertNotEqual(e.reason, 'Bad Request')
@@ -27,7 +28,7 @@ class TestGoogleFinance(unittest.TestCase):
 		Test whether the get_raw_data function returns the result ticker of NASDQ:GOOG
 		"""
 		try:
-			data = get_raw_data(["NASDQ:GOOG", "NASDQ:FB"])
+			data = spw.get_raw_data_from_gfinance(["NASDQ:GOOG", "NASDQ:FB"])
 		except urllib.error.URLError as e:
 			#bad request
 			self.assertNotEqual(e.reason, 'Bad Request')
