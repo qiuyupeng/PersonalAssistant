@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'pfinance',
+    'pfinance.apps.PfinanceConfig',
+    'jquery',
+    'jquery_ui',
 ]
 
 MIDDLEWARE_CLASSES = [

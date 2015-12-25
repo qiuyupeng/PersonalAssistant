@@ -1,0 +1,14 @@
+<head>
+{% load staticfiles %}
+</head>
+
+<body>
+	<h1>Please enter your username and password</h1>
+	<form action="{% url 'pfinance:login_verify' %}" method="post">
+	{% csrf_token %}
+	username: <input type="text" name="usr"><br>
+	password: <input type="password" name="pwd"><br>
+	<input type="submit" value="Submit">
+	</form>
+</body>
+

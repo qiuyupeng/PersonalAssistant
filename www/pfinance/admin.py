@@ -8,17 +8,23 @@ class stockPriceInline(admin.TabularInline):
 	model = stockPrice
 	extra = 0
 
+class userTransactionInline(admin.TabularInline):
+	model = userTransaction
+	extra = 0
+
 class staticStockInfoAdmin(admin.ModelAdmin):
     # ...
     list_display = ('stock_name', 'exchange_name', 'ticker_name', 's_type')
 
-    inlines= [stockPriceInline]
+    inlines = [stockPriceInline]
 
 class userInfoAdmin(admin.ModelAdmin):
-	list_display = ('last_name', 'first_name')
+	list_display = ('last_name', 'first_name', 'login_username')
+
+	inlines = [userTransactionInline]
 
 
 admin.site.register(staticStockInfo, staticStockInfoAdmin)
 admin.site.register(userInfo, userInfoAdmin)
-admin.site.register(userTransaction)
+#admin.site.register(userTransaction)
 #admin.site.register(stockPrice)

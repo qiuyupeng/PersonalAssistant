@@ -1,5 +1,6 @@
 from django.db import models
-
+import datetime
+from pytz import timezone
 # Create your models here.
 
 class staticStockInfo(models.Model):
@@ -17,11 +18,36 @@ class staticStockInfo(models.Model):
 	def __str__(self):
 		return self.ticker_name
 
+	def all_quote(self, starting_datetime=None):
+		"""
+		get all quotes about the stock, after starting time.
+		If starting time is None, using 1year by default.
+		"""
+		now = datetime.datetime.now(tz=timezone('EST'))
+
+		if starting_datetime is None:
+			starting_datetime = now - datetime.timedelta(days=365)
+
+		return self.stockprice_set.filter(update_datetime__gte=starting_datetime).order_by('update_datetime')
+
+	def latest_quote(self):
+		"""
+		get the latest quote from the database
+		"""
+		latest_datetime = self.stockprice_set.aggregate(
+			models.Max('update_datetime'))['update_datetime__max']
+
+		return self.stockprice_set.get(update_datetime=latest_datetime)
+
+
 
 class userInfo(models.Model):
 
 	last_name = models.CharField(max_length=32)
 	first_name = models.CharField(max_length=32)
+
+	login_username = models.CharField(max_length=32)
+	login_password = models.CharField(max_length=256)
 
 	def __str__(self):
 		return self.last_name + ',' + self.first_name
@@ -60,10 +86,10 @@ class userTransaction(models.Model):
 		"""
 		Calculate the cost of the transaction, sell is positive, buy is negative
 		"""
-		if self.tran_type:
-			return - shares * price - commission
+		if self.tran_type == 'b':
+			return - self.shares * self.price - self.commission
 		else:
-			return shares * price - commission
+			return self.shares * self.price - self.commission
 
 
 

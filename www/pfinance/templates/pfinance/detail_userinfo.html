@@ -1,0 +1,169 @@
+<head>
+  {% load staticfiles %}
+
+  <link rel="stylesheet" type="text/css" href="{% static 'pfinance/user_portfolio_main.css' %}" />
+
+  <script src="{% static 'js/jquery.js' %}">
+  </script>
+
+  <script type='text/javascript' src='{% static 'js/jquery-ui.js' %}'></script>
+  
+  <link rel='stylesheet' type='text/css' href='{% static 'css/jquery-ui/ui-lightness/jquery-ui.css' %}' />
+
+  <script type="text/javascript" src="{% static 'pfinance/user_portfolio_main.js' %}">
+  </script>
+  
+</head>
+
+<div class="top">
+  <h2>Personal Financial Center</h2>
+</div>
+
+<div class="left">
+  Last Name: {{user_obj.last_name}} <br>
+  First Name: {{user_obj.first_name}} <br>
+  <form action="{% url 'pfinance:logout' %}" method="post">
+  {% csrf_token %}
+  <input type="submit" value="Logout">
+  </form>
+</div>
+
+<div class="main">
+
+{% if user_portfolio %}
+<select id="user_stock_view">
+<option value="1" selected="selected">All</option>
+<option value="2">Current Holding</option>
+</select>
+
+<table id="portfolio_table">
+<thead>
+<tr>
+  <th>Stock Name</th>
+  <th>Ticker</th>
+  <th>Last Quote</th>
+  <th>Change</th>
+  <th>Shares</th>
+  <th>Cost Basis</th>
+  <th>Market Value</th>
+  <th>Day's Gain</th>
+  <th>Unrealized Gain</th>
+  <th>Realized Gain</th>
+</tr>
+</thead>
+<tbody>
+{% for ticker, holding in user_portfolio.holding_dict.items %}
+<tr>
+  <td>{{ holding.stock_name }}</td>
+  <td>{{ ticker }}</td>
+  <td>{{ holding.latest_quote.price }}</td>
+  <td class="colorshow">{{holding.price_diff}}({{holding.ratio_change}}) </td>
+  <td class="currentholding"> {{ holding.net_share }}</td>
+  <td>{{ holding.cost_basis }}</td>
+  <td>{{ holding.market_value }}</td>
+  <td class="colorshow">{{ holding.today_gain }}</td>
+  <td class="colorshow">{{ holding.unrealized_gain }}</td>
+  <td class="colorshow">{{ holding.realized_gain }}</td>
+</tr> 
+{% endfor %}
+<tr class="lastrow">
+  <td colspan="5"> Summary</th>
+  <td> {{ user_portfolio.total_cost }}</td>
+  <td> {{ user_portfolio.total_market_value }}</td>
+  <td class="colorshow">{{ user_portfolio.total_today_gain }}</td>
+  <td class="colorshow"> {{ user_portfolio.total_unrealized_gain }}</td>
+  <td class="colorshow"> {{ user_portfolio.total_realized_gain }}</td>
+</tr> 
+</tbody>
+</table>
+{% endif %}
+
+
+
+<div id="transaction_record">
+
+  <select id="user_transaction_view">
+    <option value="all" selected="selected">All</option>
+    {% for ticker in user_portfolio.holding_dict.keys %}
+    <option value="{{ticker}}">{{ticker}}</option>
+    {% endfor %}
+  </select>
+
+  <table id="user_transaction_table">
+    <thead>
+      <tr>
+        <th>Stock Name</th>
+        <th>Ticker</th>
+        <th>Type</th>
+        <th>Datetime</th>
+        <th>Shares</th>
+        <th>Price</th>
+        <th>Cost Value</th>
+        <th>Commission</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for tran in transaction_history %}
+          <tr class="{{tran.stock_id.ticker_name}}">
+          <td>{{ tran.stock_id.stock_name }}</td>
+          <td>{{ tran.stock_id.ticker_name }}</td>
+          <td>{{ tran.get_tran_type_display}}</td>
+          <td>{{ tran.exe_datetime}}</td>
+          <td>{{ tran.shares}}</td>
+          <td>{{ tran.price}}</td>
+          <td>{{ tran.total_cost}}</td>
+          <td>{{ tran.commission}}</td>
+          </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div id="addtran">
+  <form action="{% url 'pfinance:add_tran' %}" method="post" id="add_tran">
+  {% csrf_token %}
+  <table>
+    <tbody>
+      <tr>
+        <td>
+          <label>Ticker</label>
+          <input type="text" name="ticker">
+        </td>
+        <td>
+          <label>Type</label>
+          <select name="tran_type">
+            <option value="b" selected>Buy</option>
+            <option value="s">Sell</option>
+          </select>
+        </td>
+        <td>
+          <label>Date</label>
+          <input type="text" name="trade_date" class="date">
+        </td>
+        <td>
+          <label>Shares</label>
+          <input type="number" name="shares">
+        </td>
+        <td>
+          <label>Price</label>
+          <input type="number" name="price">
+        </td>
+        <td>
+          <label>Commission</label>
+          <input type="number" name="commission">
+        </td>
+      </tr>
+      <tr>
+        <td colspan="6">
+          <input type="submit" value="Add Transaction">
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </form>
+</div>
+
+
+</div>
+
+
